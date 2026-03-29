@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
 export async function POST(req: NextRequest) {
   const { userId } = auth();
@@ -36,13 +36,18 @@ Return ONLY valid JSON with these exact keys:
 
 Focus on uplifting songs suited to ${tag}. Exclude sad or heavy music.`;
 
-    const result = await model.generateContent(prompt);
-    const text = result.response.text();
+    const result = await ai.models.generateContent({ model, contents: prompt });
+    const text = result.text ?? "";
 
+    // Robust JSON extraction: handles markdown fences and preamble
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
-      const parsed = JSON.parse(jsonMatch[0]);
-      return NextResponse.json(parsed);
+      try {
+        const parsed = JSON.parse(jsonMatch[0]);
+        return NextResponse.json(parsed);
+      } catch (parseError) {
+        console.error("Gemini JSON parse failed:", parseError, "Raw:", text.substring(0, 500));
+      }
     }
 
     throw new Error("Failed to parse Gemini response");

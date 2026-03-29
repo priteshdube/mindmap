@@ -81,7 +81,7 @@ export default function JournalViewPage() {
       <div className="flex items-center justify-between mb-8">
         <Link
           href="/journal"
-          className="flex items-center gap-2 text-muted hover:text-white transition-colors"
+          className="flex items-center gap-2 text-muted hover:text-text transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span className="text-sm">Back to Journal</span>
@@ -114,7 +114,7 @@ export default function JournalViewPage() {
 
       {/* Content */}
       <div
-        className="prose prose-invert max-w-none mb-8 text-text/90 leading-relaxed [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-text [&_h2]:mt-6 [&_h2]:mb-3 [&_p]:mb-4 [&_ul]:pl-5 [&_ol]:pl-5 [&_li]:mb-1"
+        className="prose prose-slate max-w-none mb-8 text-text/90 leading-relaxed [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-text [&_h2]:mt-6 [&_h2]:mb-3 [&_p]:mb-4 [&_ul]:pl-5 [&_ol]:pl-5 [&_li]:mb-1"
         dangerouslySetInnerHTML={{ __html: entry.content }}
       />
 
@@ -135,7 +135,7 @@ export default function JournalViewPage() {
           </p>
           <div className="p-3 rounded-xl bg-surface-2 border border-border">
             <p className="text-sm text-accent-2">
-              💡 {entry.aiSummary.suggestion}
+              Suggested next step: {entry.aiSummary.suggestion}
             </p>
           </div>
         </div>
@@ -149,7 +149,7 @@ export default function JournalViewPage() {
               <h3 className="text-text font-semibold">Delete Entry</h3>
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="text-muted hover:text-white transition-colors"
+                className="text-muted hover:text-text transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -161,7 +161,7 @@ export default function JournalViewPage() {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="flex-1 border border-border hover:border-accent/40 hover:bg-surface-2 rounded-xl py-2.5 text-muted hover:text-white text-sm font-medium transition-colors"
+                className="flex-1 border border-border hover:border-accent/40 hover:bg-surface-2 rounded-xl py-2.5 text-muted hover:text-text text-sm font-medium transition-colors"
               >
                 Cancel
               </button>

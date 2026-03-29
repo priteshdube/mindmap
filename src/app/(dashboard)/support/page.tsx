@@ -1,20 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   Heart,
-  Play,
-  Music,
+  Music2,
+  VolumeX,
   MessageCircle,
   Users,
   ExternalLink,
   AlertCircle,
-  Quote,
-  Headphones,
-  Volume2,
+  Sparkles,
+  Play,
+  ArrowRight,
 } from "lucide-react";
 
+/* ─────────────────────────────── types ─────────────────────────────── */
 interface SupportContent {
   quote: string;
   quoteAuthor: string;
@@ -25,13 +26,14 @@ interface SupportContent {
   binaural_beats: { title: string; type: string; youtubeSearchQuery: string }[];
 }
 
+/* ─────────────────────────────── fallback ───────────────────────────── */
 const FALLBACK: SupportContent = {
   quote:
     "You don't have to control your thoughts. You just have to stop letting them control you.",
   quoteAuthor: "Dan Millman",
   message:
-    "What you're feeling right now is valid, and it takes courage to acknowledge it.",
-  uplifting_songs: [
+    "What you're feeling is real. Small, steady steps can make today easier.",
+  videos: [
     {
       title: "Here Comes The Sun",
       artist: "The Beatles",
@@ -82,21 +84,85 @@ const FALLBACK: SupportContent = {
   ],
 };
 
+/* ─────────────── YouTube thumbnail helper ───────────────────────────── */
+// We use a known relaxing video ID per slot as placeholder thumbnails.
+// In production you'd resolve these via YouTube Data API.
+const THUMB_IDS = ["inpok4MKVLM", "O-6f5wQXSu8", "ZToicYcHIOU"];
+
+function YouTubeCard({
+  video,
+  index,
+}: {
+  video: { title: string; youtubeSearchQuery: string };
+  index: number;
+}) {
+  const [hovered, setHovered] = useState(false);
+  const thumbId = THUMB_IDS[index % THUMB_IDS.length];
+  const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(
+    video.youtubeSearchQuery
+  )}`;
+
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="group block rounded-2xl overflow-hidden bg-surface border border-border hover:border-accent/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-accent/10"
+    >
+      {/* Thumbnail */}
+      <div className="relative w-full aspect-video overflow-hidden bg-surface-2">
+        <img
+          src={`https://img.youtube.com/vi/${thumbId}/mqdefault.jpg`}
+          alt={video.title}
+          className={`w-full h-full object-cover transition-transform duration-500 ${hovered ? "scale-110" : "scale-100"
+            }`}
+        />
+        {/* overlay */}
+        <div
+          className={`absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity duration-300 ${hovered ? "opacity-100" : "opacity-0"
+            }`}
+        >
+          <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+            <Play className="w-5 h-5 text-red-500 ml-0.5" fill="currentColor" />
+          </div>
+        </div>
+        {/* YouTube badge */}
+        <span className="absolute bottom-2 left-2 text-[10px] px-2 py-0.5 rounded-full bg-red-600 text-white font-semibold tracking-wide">
+          YouTube
+        </span>
+      </div>
+      {/* Title */}
+      <div className="p-3 flex items-center justify-between gap-2">
+        <p className="text-sm font-medium text-text group-hover:text-accent transition-colors leading-snug line-clamp-2">
+          {video.title}
+        </p>
+        <ExternalLink className="w-3.5 h-3.5 text-muted shrink-0" />
+      </div>
+    </a>
+  );
+}
+
+/* ─────────────── Advisors ───────────────────────────────────────────── */
 const advisors = [
   {
     name: "Dr. Sarah Chen",
     expertise: "Career Stress & Burnout",
     linkedin: "https://linkedin.com/in/",
+    initials: "SC",
   },
   {
     name: "Marcus Williams, LMHC",
     expertise: "Student Mental Health",
     linkedin: "https://linkedin.com/in/",
+    initials: "MW",
   },
   {
     name: "Dr. Priya Patel",
     expertise: "Workplace Anxiety",
     linkedin: "https://linkedin.com/in/",
+    initials: "PP",
   },
 ];
 
@@ -117,14 +183,39 @@ export default function SupportPage() {
   const [content, setContent] = useState<SupportContent | null>(null);
   const [moodTag, setMoodTag] = useState("");
   const [loading, setLoading] = useState(true);
+  const [musicOn, setMusicOn] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  /* ambient music — free orchestral loop from Pixabay CDN */
+  useEffect(() => {
+    const audio = new Audio(
+      "https://cdn.pixabay.com/download/audio/2022/08/02/audio_884fe92c21.mp3?filename=relaxing-145038.mp3"
+    );
+    audio.loop = true;
+    audio.volume = 0.35;
+    audioRef.current = audio;
+    return () => {
+      audio.pause();
+    };
+  }, []);
+
+  const toggleMusic = () => {
+    if (!audioRef.current) return;
+    if (musicOn) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play().catch(() => { });
+    }
+    setMusicOn((p) => !p);
+  };
+
+  /* data fetch */
   useEffect(() => {
     async function load() {
       try {
         const moodRes = await fetch("/api/mood");
         let tag = "low mood";
         let score = 3;
-
         if (moodRes.ok) {
           const moods = await moodRes.json();
           if (moods.length > 0) {
@@ -139,13 +230,7 @@ export default function SupportPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ tag, score }),
         });
-
-        if (res.ok) {
-          const data = await res.json();
-          setContent(data);
-        } else {
-          setContent(FALLBACK);
-        }
+        setContent(res.ok ? normalizeSupportContent(await res.json()) : FALLBACK);
       } catch {
         setContent(FALLBACK);
       } finally {
@@ -435,6 +520,7 @@ export default function SupportPage() {
           </p>
         </div>
       </div>
+
     </div>
   );
 }

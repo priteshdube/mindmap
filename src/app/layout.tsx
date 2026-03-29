@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -8,7 +7,7 @@ export const metadata: Metadata = {
   description:
     "A personalized mental wellness platform for students and professionals dealing with career pressure, burnout, and life stress.",
 };
-
+//Root function 
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -17,24 +16,23 @@ export default function RootLayout({
   return (
     <ClerkProvider
       appearance={{
-        baseTheme: dark,
         variables: {
-          colorPrimary: "#7c6ff7",
-          colorBackground: "#1a1a24",
-          colorInputBackground: "#22222f",
-          colorInputText: "#e8e8f0",
+          colorPrimary: "#2f9b87",
+          colorBackground: "#ffffff",
+          colorInputBackground: "#f1eee4",
+          colorInputText: "#1f2d2b",
         },
         elements: {
           formButtonPrimary:
-            "bg-[#7c6ff7] hover:bg-[#6b5fd6] transition-colors",
-          card: "bg-[#1a1a24] border border-[#2e2e3e]",
-          headerTitle: "text-[#e8e8f0]",
-          headerSubtitle: "text-[#6b6b80]",
+            "bg-[#2f9b87] hover:bg-[#278370] transition-colors",
+          card: "bg-[#ffffff] border border-[#d9e4e0]",
+          headerTitle: "text-[#1f2d2b]",
+          headerSubtitle: "text-[#6f7d79]",
           socialButtonsBlockButton:
-            "bg-[#22222f] border border-[#2e2e3e] text-[#e8e8f0] hover:bg-[#2e2e3e]",
+            "bg-[#f1eee4] border border-[#d9e4e0] text-[#1f2d2b] hover:bg-[#ece7dc]",
           formFieldInput:
-            "bg-[#22222f] border-[#2e2e3e] text-[#e8e8f0] focus:border-[#7c6ff7]",
-          footerActionLink: "text-[#7c6ff7] hover:text-[#6b5fd6]",
+            "bg-[#f1eee4] border-[#d9e4e0] text-[#1f2d2b] focus:border-[#2f9b87]",
+          footerActionLink: "text-[#2f9b87] hover:text-[#278370]",
         },
       }}
     >

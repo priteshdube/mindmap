@@ -5,6 +5,19 @@ import User from "@/models/User";
 import MoodLog from "@/models/MoodLog";
 import { GoogleGenAI } from "@google/genai";
 
+function isQuotaError(error: unknown): boolean {
+  const err = error as {
+    status?: number;
+    message?: string;
+  };
+  const message = err?.message ?? "";
+  return (
+    err?.status === 429 ||
+    message.includes("RESOURCE_EXHAUSTED") ||
+    message.includes("quota")
+  );
+}
+
 export async function POST(req: NextRequest) {
   const { userId } = auth();
   if (!userId) {
@@ -41,7 +54,10 @@ export async function POST(req: NextRequest) {
       .lean();
     const moodScore = todayMood?.score || "unknown";
 
-    const ai = new GoogleGenAI({});
+    // Pass key explicitly — otherwise the SDK prefers GOOGLE_API_KEY over GEMINI_API_KEY.
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    const model =
+      process.env.GEMINI_MODEL ?? "gemini-2.5-flash";
 
     const systemPrompt = `You are MindPath, a compassionate wellness companion for a ${role} dealing with ${stressor}. Their personal goal is: ${goal}. Their mood today is ${moodScore}/10. Be empathetic, keep responses under 150 words, and make advice career-context-aware. Never diagnose. Always recommend professional help for serious concerns.`;
 
@@ -53,8 +69,6 @@ export async function POST(req: NextRequest) {
       })
       .join("\n");
 
-    const lastMessage = messages[messages.length - 1].content;
-    
     const fullPrompt = `${systemPrompt}\n\nConversation History:\n${conversationHistory}`;
 
     const response = await ai.models.generateContent({
@@ -64,22 +78,36 @@ export async function POST(req: NextRequest) {
 
     const reply = response.text;
 
-    console.log(response)
-
     return NextResponse.json({ reply });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as {
+      message?: string;
+      status?: number;
+      statusText?: string;
+    };
     console.error("Chat error details:", {
-      message: error.message,
-      status: error.status,
-      statusText: error.statusText,
+      message: err?.message,
+      status: err?.status,
+      statusText: err?.statusText,
       fullError: error,
     });
+
+    if (isQuotaError(error)) {
+      return NextResponse.json(
+        {
+          reply:
+            "Our AI service has reached its usage limit for now. Please try again in a few minutes, or use a new Gemini API key with available quota.",
+        },
+        { status: 503 }
+      );
+    }
+
     return NextResponse.json(
       {
         reply:
           "I'm having trouble connecting right now. Please try again in a moment. If you're in crisis, please call or text 988.",
       },
-      { status: 200 }
+      { status: 500 }
     );
   }
 }

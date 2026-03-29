@@ -37,7 +37,7 @@ export default async function LandingPage() {
               <>
                 <Link
                   href="/sign-in"
-                  className="border border-border hover:border-accent/40 hover:bg-surface rounded-xl px-5 py-2.5 text-muted hover:text-white text-sm font-medium transition-colors"
+                  className="border border-border hover:border-accent/40 hover:bg-surface rounded-xl px-5 py-2.5 text-muted hover:text-text text-sm font-medium transition-colors"
                 >
                   Sign In
                 </Link>
@@ -64,24 +64,24 @@ export default async function LandingPage() {
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface border border-border mb-8">
             <div className="w-2 h-2 rounded-full bg-accent-2 animate-pulse" />
             <span className="text-xs font-medium text-muted">
-              Built for students & professionals
+              Built for students and professionals
             </span>
           </div>
 
           {/* Headline */}
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6">
-            <span className="text-text">Your career stress</span>
+            <span className="text-text">A lighter way to care for</span>
             <br />
             <span className="bg-gradient-to-r from-accent via-accent to-accent-2 bg-clip-text text-transparent">
-              deserves more than
+              your mental wellbeing
             </span>
             <br />
-            <span className="text-text">a generic app.</span>
+            <span className="text-text">every day.</span>
           </h1>
 
           <p className="text-lg md:text-xl text-muted max-w-2xl mx-auto mb-10 leading-relaxed">
-            MindPath adapts to who you are and what you&apos;re going through —
-            whether it&apos;s exam pressure, job hunting, or burnout.
+            MindPath helps you check in, reflect, and find support that fits
+            your real life, from exam pressure to career transitions.
           </p>
 
           {/* CTAs */}
@@ -94,7 +94,7 @@ export default async function LandingPage() {
             </Link>
             <a
               href="#features"
-              className="border border-border hover:border-accent/40 hover:bg-surface rounded-xl px-8 py-3.5 text-muted hover:text-white font-medium transition-colors flex items-center gap-2"
+              className="border border-border hover:border-accent/40 hover:bg-surface rounded-xl px-8 py-3.5 text-muted hover:text-text font-medium transition-colors flex items-center gap-2"
             >
               Learn More <ChevronRight className="w-4 h-4" />
             </a>
@@ -113,8 +113,8 @@ export default async function LandingPage() {
               </span>
             </h2>
             <p className="text-muted max-w-lg mx-auto">
-              Tools designed specifically for the unique mental health challenges
-              of students and professionals.
+              Thoughtful tools for emotional clarity, steadier routines, and
+              practical support when days feel heavy.
             </p>
           </div>
 
@@ -149,10 +149,10 @@ export default async function LandingPage() {
 
             {/* Feature 3 */}
             <div className="rounded-2xl bg-surface border border-border p-6 hover:border-accent/30 transition-all duration-200 group">
-              <div className="w-12 h-12 rounded-xl bg-purple-500/15 flex items-center justify-center mb-5">
-                <BarChart3 className="w-6 h-6 text-purple-400" />
+              <div className="w-12 h-12 rounded-xl bg-accent-3/15 flex items-center justify-center mb-5">
+                <BarChart3 className="w-6 h-6 text-accent-3" />
               </div>
-              <h3 className="text-text font-semibold mb-2 group-hover:text-purple-400 transition-colors">
+              <h3 className="text-text font-semibold mb-2 group-hover:text-accent-3 transition-colors">
                 Weekly Reports
               </h3>
               <p className="text-sm text-muted leading-relaxed">

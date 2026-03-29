@@ -1,5 +1,4 @@
 "use client";
-
 import { useEditor, EditorContent } from "@tiptap/react";
 import { useEffect, useState } from "react";
 import StarterKit from "@tiptap/starter-kit";
@@ -33,6 +32,7 @@ export default function TipTapEditor({
   }, []);
 
   const editor = useEditor({
+    immediatelyRender: false, // ← fixes SSR hydration mismatch
     extensions: [
       StarterKit.configure({
         heading: { levels: [2] },
@@ -105,10 +105,9 @@ export default function TipTapEditor({
               key={tool.label}
               onClick={tool.action}
               type="button"
-              className={`p-2 rounded-lg transition-all duration-200 ${
-                tool.active
+              className={`p-2 rounded-lg transition-all duration-200 ${tool.active
                   ? "bg-accent/20 text-accent"
-                  : "text-muted hover:text-white hover:bg-surface"
+                  : "text-muted hover:text-text hover:bg-surface"
               }`}
               title={tool.label}
             >
@@ -117,7 +116,6 @@ export default function TipTapEditor({
           );
         })}
       </div>
-
       {/* Editor */}
       <div className="bg-surface-2 rounded-b-xl border-x border-b border-border">
         <EditorContent editor={editor} />

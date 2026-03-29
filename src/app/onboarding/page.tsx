@@ -81,7 +81,7 @@ export default function OnboardingPage() {
         {step === 1 && (
           <div className="animate-fade-in">
             <h1 className="text-3xl font-bold text-text mb-2">
-              Welcome to MindPath{user?.firstName ? `, ${user.firstName}` : ""} 👋
+              Welcome to MindPath{user?.firstName ? `, ${user.firstName}` : ""}
             </h1>
             <p className="text-muted mb-10 text-lg">
               Which best describes you right now?
@@ -167,7 +167,7 @@ export default function OnboardingPage() {
                   className={`px-5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 ${
                     stressor === s
                       ? "bg-accent text-white shadow-lg shadow-accent/20"
-                      : "bg-surface border border-border text-muted hover:text-white hover:border-accent/40"
+                      : "bg-surface border border-border text-muted hover:text-text hover:border-accent/40"
                   }`}
                 >
                   {s}
@@ -178,7 +178,7 @@ export default function OnboardingPage() {
             <div className="flex justify-between mt-10">
               <button
                 onClick={() => setStep(1)}
-                className="border border-border hover:border-accent/40 hover:bg-surface rounded-xl px-5 py-2.5 text-muted hover:text-white transition-colors flex items-center gap-2"
+                className="border border-border hover:border-accent/40 hover:bg-surface rounded-xl px-5 py-2.5 text-muted hover:text-text transition-colors flex items-center gap-2"
               >
                 <ArrowLeft className="w-4 h-4" /> Back
               </button>
@@ -214,7 +214,7 @@ export default function OnboardingPage() {
             <div className="flex justify-between mt-10">
               <button
                 onClick={() => setStep(2)}
-                className="border border-border hover:border-accent/40 hover:bg-surface rounded-xl px-5 py-2.5 text-muted hover:text-white transition-colors flex items-center gap-2"
+                className="border border-border hover:border-accent/40 hover:bg-surface rounded-xl px-5 py-2.5 text-muted hover:text-text transition-colors flex items-center gap-2"
               >
                 <ArrowLeft className="w-4 h-4" /> Back
               </button>
