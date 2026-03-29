@@ -4,7 +4,7 @@ import { connectDB } from "@/lib/mongodb";
 import MoodLog from "@/models/MoodLog";
 import JournalEntry from "@/models/JournalEntry";
 import User from "@/models/User";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import { startOfWeek, endOfWeek, subWeeks, format } from "date-fns";
 
 function stripHtml(html: string): string {
@@ -92,8 +92,8 @@ export async function GET(req: NextRequest) {
     const goal = user?.goal || "personal growth";
 
     try {
-      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
+      const model = process.env.GEMINI_MODEL ?? "gemini-2.5-flash";
 
       let prompt: string;
 
@@ -116,8 +116,8 @@ Write a 3-sentence insight. Sentence 1: name a specific emotional pattern or the
         prompt = `A ${role} dealing with ${stressor} had this week: avg mood ${avgMood}/10, top feeling ${topTag}, ${journals.length} journal entries, ${streak} day streak. Write 3 warm encouraging sentences with one gentle suggestion for next week.`;
       }
 
-      const result = await model.generateContent(prompt);
-      insight = result.response.text();
+      const result = await ai.models.generateContent({ model, contents: prompt });
+      insight = result.text ?? "";
     } catch {
       insight =
         moods.length > 0

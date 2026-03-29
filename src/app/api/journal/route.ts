@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { connectDB } from "@/lib/mongodb";
 import JournalEntry from "@/models/JournalEntry";
 import User from "@/models/User";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
 function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, "").trim();
@@ -63,13 +63,13 @@ export async function POST(req: NextRequest) {
     };
 
     try {
-      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
+      const model = process.env.GEMINI_MODEL ?? "gemini-2.5-flash";
 
       const prompt = `Analyze this journal entry written by a ${role} dealing with ${stressor}. Return ONLY valid JSON with exactly these keys: tone (single emotion word), summary (two empathetic sentences reflecting what the user expressed), suggestion (one specific actionable tip relevant to their situation). Entry: ${plainText}`;
 
-      const result = await model.generateContent(prompt);
-      const text = result.response.text();
+      const result = await ai.models.generateContent({ model, contents: prompt });
+      const text = result.text ?? "";
 
       // Extract JSON from response
       const jsonMatch = text.match(/\{[\s\S]*\}/);
@@ -79,8 +79,9 @@ export async function POST(req: NextRequest) {
           aiSummary = parsed;
         }
       }
-    } catch {
-      // Use fallback — Gemini failure must not crash
+    } catch (geminiError) {
+      console.error("Gemini AI analysis failed:", geminiError);
+      // Use fallback — Gemini failure must not crash the save
     }
 
     const entry = await JournalEntry.create({
