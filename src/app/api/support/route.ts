@@ -28,10 +28,15 @@ export async function POST(req: NextRequest) {
     const result = await ai.models.generateContent({ model, contents: prompt });
     const text = result.text ?? "";
 
+    // Robust JSON extraction: handles markdown fences and preamble
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
-      const parsed = JSON.parse(jsonMatch[0]);
-      return NextResponse.json(parsed);
+      try {
+        const parsed = JSON.parse(jsonMatch[0]);
+        return NextResponse.json(parsed);
+      } catch (parseError) {
+        console.error("Gemini JSON parse failed:", parseError, "Raw:", text.substring(0, 500));
+      }
     }
 
     throw new Error("Failed to parse Gemini response");
