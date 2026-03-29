@@ -41,7 +41,10 @@ export async function POST(req: NextRequest) {
       .lean();
     const moodScore = todayMood?.score || "unknown";
 
-    const ai = new GoogleGenAI({});
+    // Pass key explicitly — otherwise the SDK prefers GOOGLE_API_KEY over GEMINI_API_KEY.
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    const model =
+      process.env.GEMINI_MODEL ?? "gemini-2.5-flash";
 
     const systemPrompt = `You are MindPath, a compassionate wellness companion for a ${role} dealing with ${stressor}. Their personal goal is: ${goal}. Their mood today is ${moodScore}/10. Be empathetic, keep responses under 150 words, and make advice career-context-aware. Never diagnose. Always recommend professional help for serious concerns.`;
 
@@ -53,18 +56,14 @@ export async function POST(req: NextRequest) {
       })
       .join("\n");
 
-    const lastMessage = messages[messages.length - 1].content;
-    
     const fullPrompt = `${systemPrompt}\n\nConversation History:\n${conversationHistory}`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
+      model,
       contents: fullPrompt,
     });
 
     const reply = response.text;
-
-    console.log(response)
 
     return NextResponse.json({ reply });
   } catch (error: any) {
