@@ -43,18 +43,13 @@ interface DashStats {
   streak: number;
 }
 
-const EMOJIS: Record<number, string> = {
-  1: "😔",
-  2: "😔",
-  3: "😟",
-  4: "😟",
-  5: "😐",
-  6: "😐",
-  7: "🙂",
-  8: "🙂",
-  9: "😊",
-  10: "🌟",
-};
+function moodLabel(score: number): string {
+  if (score <= 2) return "Struggling";
+  if (score <= 4) return "Low";
+  if (score <= 6) return "Steady";
+  if (score <= 8) return "Good";
+  return "Excellent";
+}
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -175,10 +170,10 @@ export default function DashboardPage() {
       {/* Greeting */}
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-text">
-          {getGreeting()}, {user?.firstName || "there"} 👋
+          {getGreeting()}, {user?.firstName || "there"}
         </h1>
         <p className="text-muted mt-1">
-          Here&apos;s your wellness overview
+          Here&apos;s your check-in overview
           {userProfile?.stressor
             ? ` — navigating ${userProfile.stressor.toLowerCase()} one day at a time.`
             : "."}
@@ -210,14 +205,16 @@ export default function DashboardPage() {
       ) : (
         <div className="rounded-2xl bg-surface border border-border p-5">
           <div className="flex items-center gap-4">
-            <span className="text-3xl">{EMOJIS[todayMood.score] || "😐"}</span>
+            <div className="w-12 h-12 rounded-xl bg-accent/15 text-accent font-bold flex items-center justify-center">
+              {todayMood.score}
+            </div>
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-text font-semibold">
                   {todayMood.score}/10
                 </span>
                 <span className="text-xs px-2 py-0.5 rounded-full bg-accent/15 text-accent font-medium">
-                  {todayMood.tag}
+                  {todayMood.tag || moodLabel(todayMood.score)}
                 </span>
               </div>
               {todayMood.note && (
@@ -274,10 +271,7 @@ export default function DashboardPage() {
             </div>
             <span className="text-muted text-sm">Day Streak</span>
           </div>
-          <p className="text-2xl font-bold text-text">
-            {stats.streak}
-            {stats.streak >= 3 && <span className="ml-1">🔥</span>}
-          </p>
+          <p className="text-2xl font-bold text-text">{stats.streak}</p>
         </div>
       </div>
 
@@ -292,23 +286,23 @@ export default function DashboardPage() {
                   dataKey="day"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: "#6b6b80", fontSize: 12 }}
+                  tick={{ fill: "#6f7d79", fontSize: 12 }}
                 />
                 <YAxis
                   domain={[0, 10]}
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: "#6b6b80", fontSize: 12 }}
+                  tick={{ fill: "#6f7d79", fontSize: 12 }}
                   width={30}
                 />
                 <Tooltip content={<CustomTooltip />} />
                 <Line
                   type="monotone"
                   dataKey="score"
-                  stroke="#7c6ff7"
+                  stroke="#2f9b87"
                   strokeWidth={2.5}
-                  dot={{ fill: "#7c6ff7", strokeWidth: 0, r: 4 }}
-                  activeDot={{ r: 6, fill: "#7c6ff7" }}
+                  dot={{ fill: "#2f9b87", strokeWidth: 0, r: 4 }}
+                  activeDot={{ r: 6, fill: "#2f9b87" }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -393,7 +387,7 @@ export default function DashboardPage() {
           href="/chat"
           className="flex items-center gap-3 rounded-2xl bg-surface border border-border p-4 hover:border-accent/40 transition-all duration-200 group"
         >
-          <div className="w-10 h-10 rounded-xl bg-purple-500/15 flex items-center justify-center text-purple-400">
+          <div className="w-10 h-10 rounded-xl bg-accent-3/15 flex items-center justify-center text-accent-3">
             <MessageCircle className="w-5 h-5" />
           </div>
           <span className="text-sm font-medium text-text">Talk to AI</span>

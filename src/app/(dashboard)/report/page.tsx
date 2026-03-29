@@ -127,7 +127,7 @@ export default function ReportPage() {
       </div>
 
       {error && (
-        <div className="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+        <div className="mb-6 rounded-xl border border-red-500/30 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
         </div>
       )}
@@ -143,7 +143,7 @@ export default function ReportPage() {
             className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-200 disabled:opacity-50 ${
               activeWeek === w.offset
                 ? "bg-accent text-white"
-                : "bg-surface border border-border text-muted hover:text-white hover:border-accent/40"
+                : "bg-surface border border-border text-muted hover:text-text hover:border-accent/40"
             }`}
           >
             {w.label}
@@ -248,7 +248,6 @@ export default function ReportPage() {
               </div>
               <p className="text-xl font-bold text-text">
                 {data.stats.streak}
-                {data.stats.streak >= 3 && <span className="ml-1">🔥</span>}
               </p>
               <p className="text-xs text-muted mt-1">Day Streak</p>
             </div>
@@ -264,23 +263,23 @@ export default function ReportPage() {
                       dataKey="day"
                       axisLine={false}
                       tickLine={false}
-                      tick={{ fill: "#6b6b80", fontSize: 12 }}
+                      tick={{ fill: "#6f7d79", fontSize: 12 }}
                     />
                     <YAxis
                       domain={[0, 10]}
                       axisLine={false}
                       tickLine={false}
-                      tick={{ fill: "#6b6b80", fontSize: 12 }}
+                      tick={{ fill: "#6f7d79", fontSize: 12 }}
                       width={30}
                     />
                     <Tooltip content={<CustomTooltip />} />
                     <Line
                       type="monotone"
                       dataKey="score"
-                      stroke="#7c6ff7"
+                      stroke="#2f9b87"
                       strokeWidth={2.5}
-                      dot={{ fill: "#7c6ff7", strokeWidth: 0, r: 4 }}
-                      activeDot={{ r: 6, fill: "#7c6ff7" }}
+                      dot={{ fill: "#2f9b87", strokeWidth: 0, r: 4 }}
+                      activeDot={{ r: 6, fill: "#2f9b87" }}
                     />
                   </LineChart>
                 </ResponsiveContainer>

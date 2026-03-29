@@ -57,8 +57,8 @@ export default function Sidebar() {
                     href={item.href}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                       isActive
-                        ? "border-l-2 border-accent bg-accent/10 text-white ml-0"
-                        : "text-muted hover:text-white hover:bg-surface-2 border-l-2 border-transparent"
+                        ? "border-l-2 border-accent bg-accent/10 text-text ml-0"
+                        : "text-muted hover:text-text hover:bg-surface-2 border-l-2 border-transparent"
                     }`}
                   >
                     <Icon className="w-[18px] h-[18px]" />
@@ -108,7 +108,7 @@ export default function Sidebar() {
                   className={`flex flex-col items-center gap-0.5 px-2 py-2 rounded-lg text-xs transition-all duration-200 ${
                     isActive
                       ? "text-accent"
-                      : "text-muted hover:text-white"
+                      : "text-muted hover:text-text"
                   }`}
                 >
                   <Icon className="w-5 h-5" />

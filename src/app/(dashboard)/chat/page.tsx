@@ -23,7 +23,7 @@ export default function ChatPage() {
       setMessages([
         {
           role: "assistant",
-          content: `Hey ${user.firstName || "there"} 👋 I'm MindPath, your wellness companion. I'm here to listen and support you through whatever you're dealing with. How are you feeling right now?`,
+          content: `Hi ${user.firstName || "there"}. I'm MindPath. This is a calm space to think things through together. How are you feeling today?`,
         },
       ]);
       setInitialized(true);
@@ -93,7 +93,7 @@ export default function ChatPage() {
     setMessages([
       {
         role: "assistant",
-        content: `Fresh start! 🌱 I'm still here whenever you need to talk, ${user?.firstName || "friend"}.`,
+        content: `Fresh start. I'm here whenever you want to continue, ${user?.firstName || "friend"}.`,
       },
     ]);
   };
@@ -108,12 +108,12 @@ export default function ChatPage() {
           </div>
           <div>
             <h1 className="text-text font-semibold">MindPath AI</h1>
-            <p className="text-xs text-muted">Your wellness companion</p>
+            <p className="text-xs text-muted">Guided support chat</p>
           </div>
         </div>
         <button
           onClick={clearChat}
-          className="text-muted hover:text-white p-2 rounded-lg hover:bg-surface-2 transition-all duration-200"
+          className="text-muted hover:text-text p-2 rounded-lg hover:bg-surface-2 transition-all duration-200"
           title="Clear chat"
         >
           <Trash2 className="w-4 h-4" />

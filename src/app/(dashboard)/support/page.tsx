@@ -26,7 +26,7 @@ const FALLBACK: SupportContent = {
     "You don't have to control your thoughts. You just have to stop letting them control you.",
   quoteAuthor: "Dan Millman",
   message:
-    "What you're feeling right now is valid, and it takes courage to acknowledge it.",
+    "What you're feeling is real. Small, steady steps can make today easier.",
   videos: [
     {
       title: "5-Minute Breathing Exercise",
@@ -129,7 +129,7 @@ export default function SupportPage() {
       {/* Header */}
       <div className="mb-10">
         <h1 className="text-2xl md:text-3xl font-bold text-text mb-3">
-          We see you. You don&apos;t have to carry this alone. 💙
+          You don&apos;t have to carry this alone.
         </h1>
         {moodTag && (
           <span className="inline-block text-sm px-3 py-1 rounded-full bg-accent-3/15 text-accent-3 font-medium">
@@ -287,8 +287,8 @@ export default function SupportPage() {
           href="/community"
           className="rounded-2xl bg-surface border border-border p-5 hover:border-accent/30 transition-all duration-200 group"
         >
-          <div className="w-10 h-10 rounded-xl bg-purple-500/15 flex items-center justify-center mb-3">
-            <Users className="w-5 h-5 text-purple-400" />
+          <div className="w-10 h-10 rounded-xl bg-accent-3/15 flex items-center justify-center mb-3">
+            <Users className="w-5 h-5 text-accent-3" />
           </div>
           <h3 className="text-text font-semibold mb-1 group-hover:text-accent transition-colors">
             Find Your People
@@ -308,7 +308,7 @@ export default function SupportPage() {
             <span className="text-accent-2 font-bold">988</span>.
           </p>
         </div>
-        <p className="text-xs text-muted">You matter. 💙</p>
+        <p className="text-xs text-muted">You matter.</p>
       </div>
     </div>
   );

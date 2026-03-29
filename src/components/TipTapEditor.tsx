@@ -106,8 +106,8 @@ export default function TipTapEditor({
               type="button"
               className={`p-2 rounded-lg transition-all duration-200 ${tool.active
                   ? "bg-accent/20 text-accent"
-                  : "text-muted hover:text-white hover:bg-surface"
-                }`}
+                  : "text-muted hover:text-text hover:bg-surface"
+              }`}
               title={tool.label}
             >
               <Icon className="w-4 h-4" />

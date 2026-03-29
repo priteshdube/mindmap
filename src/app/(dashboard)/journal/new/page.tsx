@@ -64,10 +64,10 @@ export default function JournalNewPage() {
             <Sparkles className="w-8 h-8 text-accent animate-pulse" />
           </div>
           <h2 className="text-xl font-semibold text-text mb-2">
-            Reflecting on your entry...
+            Reviewing your entry...
           </h2>
           <p className="text-muted">
-            Our AI is reading and understanding your thoughts.
+            Gathering a short reflection based on what you wrote.
           </p>
         </div>
       </div>
@@ -82,7 +82,7 @@ export default function JournalNewPage() {
           <div className="rounded-2xl bg-surface border border-border p-6">
             <div className="flex items-center gap-2 mb-4">
               <Sparkles className="w-5 h-5 text-accent" />
-              <h3 className="text-lg font-semibold text-text">AI Insight</h3>
+              <h3 className="text-lg font-semibold text-text">Reflection Insight</h3>
             </div>
 
             <div className="mb-4">
@@ -96,7 +96,7 @@ export default function JournalNewPage() {
             </p>
 
             <div className="p-4 rounded-xl bg-surface-2 border border-border">
-              <p className="text-sm text-accent-2">💡 {insight.suggestion}</p>
+              <p className="text-sm text-accent-2">Suggested next step: {insight.suggestion}</p>
             </div>
 
             <p className="text-xs text-muted mt-4 text-center">
@@ -115,7 +115,7 @@ export default function JournalNewPage() {
         <div className="max-w-4xl mx-auto flex items-center justify-between px-6 py-3">
           <Link
             href="/journal"
-            className="flex items-center gap-2 text-muted hover:text-white transition-colors"
+            className="flex items-center gap-2 text-muted hover:text-text transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm">Back</span>
@@ -151,8 +151,8 @@ export default function JournalNewPage() {
               }
               className={`w-8 h-8 rounded-lg text-xs font-medium transition-all duration-200 ${moodScore === n
                   ? "bg-accent text-white"
-                  : "bg-surface-2 text-muted hover:text-white hover:bg-surface border border-border"
-                }`}
+                  : "bg-surface-2 text-muted hover:text-text hover:bg-surface border border-border"
+              }`}
             >
               {n}
             </button>

@@ -5,7 +5,18 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-const EMOJIS = ["😔", "😔", "😟", "😟", "😐", "😐", "🙂", "🙂", "😊", "🌟"];
+const MOOD_STATES = [
+  "Very Low",
+  "Very Low",
+  "Low",
+  "Low",
+  "Steady",
+  "Steady",
+  "Good",
+  "Good",
+  "Great",
+  "Excellent",
+];
 const LABELS: Record<string, [number, number]> = {
   Struggling: [1, 2],
   Low: [3, 4],
@@ -80,7 +91,7 @@ export default function MoodPage() {
         {/* Back button */}
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-2 text-muted hover:text-white mb-8 transition-colors"
+          className="inline-flex items-center gap-2 text-muted hover:text-text mb-8 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span className="text-sm">Back to Dashboard</span>
@@ -88,16 +99,16 @@ export default function MoodPage() {
 
         <div className="text-center mb-10">
           <h1 className="text-2xl md:text-3xl font-bold text-text mb-2">
-            How are you feeling?
+            How are you feeling right now?
           </h1>
-          <p className="text-muted">Be honest — this is your safe space.</p>
+          <p className="text-muted">A short check-in can help you notice patterns over time.</p>
         </div>
 
-        {/* Emoji */}
+        {/* Mood state */}
         <div className="text-center mb-6">
-          <span className="text-7xl md:text-8xl inline-block transition-all duration-300">
-            {EMOJIS[score - 1]}
-          </span>
+          <div className="inline-flex items-center rounded-full bg-accent/15 px-6 py-2.5 text-accent font-semibold tracking-wide">
+            {MOOD_STATES[score - 1]}
+          </div>
         </div>
 
         {/* Slider */}
@@ -144,7 +155,7 @@ export default function MoodPage() {
                 onClick={() => toggleTag(tag)}
                 className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${selectedTags.includes(tag)
                     ? "bg-accent text-white shadow-lg shadow-accent/20"
-                    : "bg-surface border border-border text-muted hover:text-white hover:border-accent/40"
+                    : "bg-surface border border-border text-muted hover:text-text hover:border-accent/40"
                   }`}
               >
                 {tag}
