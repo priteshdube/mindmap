@@ -21,10 +21,6 @@ A personalized mental wellness web app for students and professionals—journali
 
 ### 1. Clone the repository
 
-```bash
-
-```
-
 ### 2. Install dependencies
 
 ```bash
