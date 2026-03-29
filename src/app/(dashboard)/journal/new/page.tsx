@@ -4,12 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Save, Sparkles } from "lucide-react";
 import Link from "next/link";
-import dynamic from "next/dynamic";
-
-const TipTapEditor = dynamic(() => import("@/components/TipTapEditor"), {
-  ssr: false,
-  loading: () => <div className="skeleton h-[400px] rounded-xl" />,
-});
+import TipTapEditor from "@/components/TipTapEditor";
 
 export default function JournalNewPage() {
   const router = useRouter();

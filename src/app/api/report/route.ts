@@ -11,6 +11,38 @@ function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, "").trim();
 }
 
+function buildDailyMoodAverages(
+  moods: Array<{ date: Date | string; score: number }>
+) {
+  const grouped = new Map<string, { total: number; count: number; date: Date }>();
+
+  moods.forEach((m) => {
+    const dateObj = new Date(m.date);
+    const dayKey = format(dateObj, "yyyy-MM-dd");
+    const existing = grouped.get(dayKey);
+
+    if (existing) {
+      existing.total += m.score;
+      existing.count += 1;
+      return;
+    }
+
+    grouped.set(dayKey, {
+      total: m.score,
+      count: 1,
+      date: dateObj,
+    });
+  });
+
+  return Array.from(grouped.values())
+    .sort((a, b) => a.date.getTime() - b.date.getTime())
+    .map((day) => ({
+      day: format(day.date, "EEE"),
+      date: format(day.date, "MMM d"),
+      score: Math.round((day.total / day.count) * 10) / 10,
+    }));
+}
+
 async function buildReport(userId: string, weekOffset: number) {
   const now = new Date();
   const weekStart = startOfWeek(subWeeks(now, weekOffset), {
@@ -45,10 +77,15 @@ async function buildReport(userId: string, weekOffset: number) {
     }).lean(),
   ]);
 
+  const dailyMoodData = buildDailyMoodAverages(
+    moods as Array<{ date: Date | string; score: number }>
+  );
+
   const avgMood =
-    moods.length > 0
+    dailyMoodData.length > 0
       ? Math.round(
-          (moods.reduce((a, m) => a + m.score, 0) / moods.length) * 10
+          (dailyMoodData.reduce((a, m) => a + m.score, 0) / dailyMoodData.length) *
+            10
         ) / 10
       : 0;
 
@@ -133,12 +170,6 @@ Write 3 warm encouraging sentences with one gentle suggestion for next week. Use
         : "";
   }
 
-  const chartData = moods.map((m) => ({
-    day: format(new Date(m.date), "EEE"),
-    date: format(new Date(m.date), "MMM d"),
-    score: m.score,
-  }));
-
   return {
     stats: {
       avgMood,
@@ -146,7 +177,7 @@ Write 3 warm encouraging sentences with one gentle suggestion for next week. Use
       journalCount: journals.length,
       streak,
     },
-    chartData: JSON.parse(JSON.stringify(chartData)),
+    chartData: JSON.parse(JSON.stringify(dailyMoodData)),
     insight,
   };
 }
