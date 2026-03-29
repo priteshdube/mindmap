@@ -172,7 +172,7 @@ export default function DashboardPage() {
         <h1 className="text-2xl md:text-3xl font-bold text-text">
           {getGreeting()}, {user?.firstName || "there"}
         </h1>
-        <p className="text-muted mt-1">
+        <p className="text-muted mt-1 mb-4">
           Here&apos;s your check-in overview
           {userProfile?.stressor
             ? ` — navigating ${userProfile.stressor.toLowerCase()} one day at a time.`
@@ -232,11 +232,10 @@ export default function DashboardPage() {
         <div className="rounded-2xl bg-surface border border-border p-5">
           <div className="flex items-center gap-3 mb-3">
             <div
-              className={`w-9 h-9 rounded-lg flex items-center justify-center ${
-                stats.avg >= 6
-                  ? "bg-accent-2/15 text-accent-2"
-                  : "bg-accent-3/15 text-accent-3"
-              }`}
+              className={`w-9 h-9 rounded-lg flex items-center justify-center ${stats.avg >= 6
+                ? "bg-accent-2/15 text-accent-2"
+                : "bg-accent-3/15 text-accent-3"
+                }`}
             >
               <TrendingUp className="w-4 h-4" />
             </div>
@@ -261,11 +260,10 @@ export default function DashboardPage() {
         <div className="rounded-2xl bg-surface border border-border p-5">
           <div className="flex items-center gap-3 mb-3">
             <div
-              className={`w-9 h-9 rounded-lg flex items-center justify-center ${
-                stats.streak >= 3
-                  ? "bg-orange-500/15 text-orange-400"
-                  : "bg-accent-2/15 text-accent-2"
-              }`}
+              className={`w-9 h-9 rounded-lg flex items-center justify-center ${stats.streak >= 3
+                ? "bg-orange-500/15 text-orange-400"
+                : "bg-accent-2/15 text-accent-2"
+                }`}
             >
               <Flame className="w-4 h-4" />
             </div>
