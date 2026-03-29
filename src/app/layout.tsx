@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description:
     "A personalized mental wellness platform for students and professionals dealing with career pressure, burnout, and life stress.",
 };
-
+//Root function 
 export default function RootLayout({
   children,
 }: Readonly<{
