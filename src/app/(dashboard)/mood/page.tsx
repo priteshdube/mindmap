@@ -119,13 +119,12 @@ export default function MoodPage() {
             <span className="text-2xl font-bold text-accent">{score}</span>
             <span className="text-muted text-sm">/10</span>
             <p
-              className={`text-sm font-medium mt-1 ${
-                score <= 4
+              className={`text-sm font-medium mt-1 ${score <= 4
                   ? "text-accent-3"
                   : score <= 6
-                  ? "text-muted"
-                  : "text-accent-2"
-              }`}
+                    ? "text-muted"
+                    : "text-accent-2"
+                }`}
             >
               {getLabel(score)}
             </p>
@@ -143,11 +142,10 @@ export default function MoodPage() {
               <button
                 key={tag}
                 onClick={() => toggleTag(tag)}
-                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
-                  selectedTags.includes(tag)
+                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${selectedTags.includes(tag)
                     ? "bg-accent text-white shadow-lg shadow-accent/20"
                     : "bg-surface border border-border text-muted hover:text-white hover:border-accent/40"
-                }`}
+                  }`}
               >
                 {tag}
               </button>

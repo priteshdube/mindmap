@@ -71,17 +71,20 @@ export async function POST(req: NextRequest) {
       const result = await ai.models.generateContent({ model, contents: prompt });
       const text = result.text ?? "";
 
-      // Extract JSON from response
+      // Extraction and parsing with detailed logging
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
-        const parsed = JSON.parse(jsonMatch[0]);
-        if (parsed.tone && parsed.summary && parsed.suggestion) {
-          aiSummary = parsed;
+        try {
+          const parsed = JSON.parse(jsonMatch[0]);
+          if (parsed.tone && parsed.summary && parsed.suggestion) {
+            aiSummary = parsed;
+          }
+        } catch (e) {
+          console.error("Journal analysis JSON parse error:", e, "Raw:", text.substring(0, 300));
         }
       }
     } catch (geminiError) {
       console.error("Gemini AI analysis failed:", geminiError);
-      // Use fallback — Gemini failure must not crash the save
     }
 
     const entry = await JournalEntry.create({
