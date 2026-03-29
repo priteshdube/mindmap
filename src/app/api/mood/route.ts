@@ -56,7 +56,7 @@ export async function POST(req: Request) {
       try {
         const user = await User.findOne({ clerkId: userId }).lean();
         if (user && user.emailNotifications && user.email) {
-          sendLowMoodEmail(user.name || "Friend", user.email).catch(() => {});
+          sendLowMoodEmail(user.name || "Friend", user.email).catch(() => { });
         }
       } catch {
         // Email failure must not affect mood save
