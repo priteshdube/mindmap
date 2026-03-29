@@ -5,6 +5,19 @@ import User from "@/models/User";
 import MoodLog from "@/models/MoodLog";
 import { GoogleGenAI } from "@google/genai";
 
+function isQuotaError(error: unknown): boolean {
+  const err = error as {
+    status?: number;
+    message?: string;
+  };
+  const message = err?.message ?? "";
+  return (
+    err?.status === 429 ||
+    message.includes("RESOURCE_EXHAUSTED") ||
+    message.includes("quota")
+  );
+}
+
 export async function POST(req: NextRequest) {
   const { userId } = auth();
   if (!userId) {
@@ -66,19 +79,35 @@ export async function POST(req: NextRequest) {
     const reply = response.text;
 
     return NextResponse.json({ reply });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as {
+      message?: string;
+      status?: number;
+      statusText?: string;
+    };
     console.error("Chat error details:", {
-      message: error.message,
-      status: error.status,
-      statusText: error.statusText,
+      message: err?.message,
+      status: err?.status,
+      statusText: err?.statusText,
       fullError: error,
     });
+
+    if (isQuotaError(error)) {
+      return NextResponse.json(
+        {
+          reply:
+            "Our AI service has reached its usage limit for now. Please try again in a few minutes, or use a new Gemini API key with available quota.",
+        },
+        { status: 503 }
+      );
+    }
+
     return NextResponse.json(
       {
         reply:
           "I'm having trouble connecting right now. Please try again in a moment. If you're in crisis, please call or text 988.",
       },
-      { status: 200 }
+      { status: 500 }
     );
   }
 }

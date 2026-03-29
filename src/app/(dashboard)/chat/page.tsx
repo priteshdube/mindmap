@@ -72,8 +72,9 @@ export default function ChatPage() {
         ...prev,
         {
           role: "assistant",
-          content:
-            "I'm having trouble connecting right now. Please try again in a moment. If you're in crisis, please call or text 988.",
+          content: errorMessage.includes("HTTP")
+            ? "I'm having trouble connecting right now. Please try again in a moment. If you're in crisis, please call or text 988."
+            : errorMessage,
         },
       ]);
     } finally {
