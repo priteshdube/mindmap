@@ -136,7 +136,7 @@ export default function JournalNewPage() {
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="What's on your mind today?"
+          placeholder="What's on your mind today? ...."
           className="w-full bg-transparent border-none text-2xl md:text-3xl font-bold text-text placeholder:text-muted/40 focus:outline-none mb-6"
         />
 
@@ -149,11 +149,10 @@ export default function JournalNewPage() {
               onClick={() =>
                 setMoodScore(moodScore === n ? undefined : n)
               }
-              className={`w-8 h-8 rounded-lg text-xs font-medium transition-all duration-200 ${
-                moodScore === n
+              className={`w-8 h-8 rounded-lg text-xs font-medium transition-all duration-200 ${moodScore === n
                   ? "bg-accent text-white"
                   : "bg-surface-2 text-muted hover:text-white hover:bg-surface border border-border"
-              }`}
+                }`}
             >
               {n}
             </button>
