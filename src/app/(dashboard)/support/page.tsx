@@ -21,6 +21,79 @@ interface SupportContent {
   songs: { title: string; artist: string; spotifySearchQuery: string }[];
 }
 
+function normalizeSupportContent(input: unknown): SupportContent {
+  const raw = (input && typeof input === "object" ? input : {}) as {
+    quote?: unknown;
+    quoteAuthor?: unknown;
+    message?: unknown;
+    videos?: unknown;
+    songs?: unknown;
+  };
+
+  const videos = Array.isArray(raw.videos)
+    ? raw.videos
+        .map((v) => {
+          if (!v || typeof v !== "object") return null;
+          const item = v as { title?: unknown; youtubeSearchQuery?: unknown };
+          if (
+            typeof item.title === "string" &&
+            typeof item.youtubeSearchQuery === "string"
+          ) {
+            return {
+              title: item.title,
+              youtubeSearchQuery: item.youtubeSearchQuery,
+            };
+          }
+          return null;
+        })
+        .filter((v): v is { title: string; youtubeSearchQuery: string } => Boolean(v))
+        .slice(0, 3)
+    : [];
+
+  const songs = Array.isArray(raw.songs)
+    ? raw.songs
+        .map((s) => {
+          if (!s || typeof s !== "object") return null;
+          const item = s as {
+            title?: unknown;
+            artist?: unknown;
+            spotifySearchQuery?: unknown;
+          };
+          if (
+            typeof item.title === "string" &&
+            typeof item.artist === "string" &&
+            typeof item.spotifySearchQuery === "string"
+          ) {
+            return {
+              title: item.title,
+              artist: item.artist,
+              spotifySearchQuery: item.spotifySearchQuery,
+            };
+          }
+          return null;
+        })
+        .filter(
+          (s): s is { title: string; artist: string; spotifySearchQuery: string } =>
+            Boolean(s)
+        )
+        .slice(0, 3)
+    : [];
+
+  return {
+    quote: typeof raw.quote === "string" && raw.quote.trim() ? raw.quote : FALLBACK.quote,
+    quoteAuthor:
+      typeof raw.quoteAuthor === "string" && raw.quoteAuthor.trim()
+        ? raw.quoteAuthor
+        : FALLBACK.quoteAuthor,
+    message:
+      typeof raw.message === "string" && raw.message.trim()
+        ? raw.message
+        : FALLBACK.message,
+    videos: videos.length ? videos : FALLBACK.videos,
+    songs: songs.length ? songs : FALLBACK.songs,
+  };
+}
+
 const FALLBACK: SupportContent = {
   quote:
     "You don't have to control your thoughts. You just have to stop letting them control you.",
@@ -109,7 +182,7 @@ export default function SupportPage() {
 
         if (res.ok) {
           const data = await res.json();
-          setContent(data);
+          setContent(normalizeSupportContent(data));
         } else {
           setContent(FALLBACK);
         }

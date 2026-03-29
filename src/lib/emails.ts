@@ -1,8 +1,24 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let resendClient: Resend | null = null;
+
+function getResendClient(): Resend | null {
+  if (resendClient) return resendClient;
+
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    // Email is optional; missing key must never break API routes.
+    return null;
+  }
+
+  resendClient = new Resend(apiKey);
+  return resendClient;
+}
 
 export async function sendLowMoodEmail(name: string, email: string) {
+  const resend = getResendClient();
+  if (!resend) return;
+
   const firstName = name.split(" ")[0];
 
   try {

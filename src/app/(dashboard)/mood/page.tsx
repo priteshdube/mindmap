@@ -44,12 +44,22 @@ function getLabel(score: number): string {
   return "Okay";
 }
 
+type SubmissionResult = {
+  title: string;
+  message: string;
+  insight: string;
+  nextPath: string;
+  ctaLabel: string;
+};
+
 export default function MoodPage() {
   const router = useRouter();
   const [score, setScore] = useState(5);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [note, setNote] = useState("");
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [result, setResult] = useState<SubmissionResult | null>(null);
 
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) =>
@@ -59,6 +69,7 @@ export default function MoodPage() {
 
   const handleSave = async () => {
     if (selectedTags.length === 0) return;
+    setError("");
     setSaving(true);
 
     try {
@@ -72,18 +83,79 @@ export default function MoodPage() {
         }),
       });
 
-      const data = await res.json();
-      if (data.redirect) {
-        router.push(data.redirect);
-      } else {
-        router.push("/dashboard");
+      if (!res.ok) {
+        const errorPayload = await res
+          .json()
+          .catch(() => ({ error: "Failed to save mood" }));
+        throw new Error(errorPayload.error || "Failed to save mood");
       }
-    } catch {
-      router.push("/dashboard");
+
+      const data = await res.json();
+      const isLowMood = score <= 4 || data.redirect === "/support";
+
+      if (isLowMood) {
+        setResult({
+          title: "Thanks for checking in",
+          message:
+            "You are not alone. We have gathered some support resources that can help right now.",
+          insight:
+            data.insight ||
+            "You took an honest first step today; one small kind action for yourself is enough right now.",
+          nextPath: "/support",
+          ctaLabel: "View Support Resources",
+        });
+      } else {
+        setResult({
+          title: "Great job checking in",
+          message:
+            "Your mood has been logged. Keep this momentum going and check your dashboard insights.",
+          insight:
+            data.insight ||
+            "You are building a healthy check-in habit, and that consistency will help you keep your momentum.",
+          nextPath: "/dashboard",
+          ctaLabel: "Go to Dashboard",
+        });
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to save mood";
+      setError(message);
     } finally {
       setSaving(false);
     }
   };
+
+  if (result) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <div className="w-full max-w-xl animate-fade-in rounded-2xl border border-border bg-surface p-8 text-center">
+          <h1 className="text-2xl md:text-3xl font-bold text-text mb-3">{result.title}</h1>
+          <p className="text-muted mb-8">{result.message}</p>
+          <p className="rounded-xl bg-surface-2 border border-border px-4 py-3 text-sm text-text mb-8">
+            {result.insight}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              onClick={() => router.push(result.nextPath)}
+              className="flex-1 bg-accent hover:bg-accent/80 rounded-xl py-3.5 text-white font-semibold transition-all duration-200"
+            >
+              {result.ctaLabel}
+            </button>
+            <button
+              onClick={() => {
+                setResult(null);
+                setSelectedTags([]);
+                setNote("");
+                setScore(5);
+              }}
+              className="flex-1 bg-surface-2 border border-border hover:border-accent/40 rounded-xl py-3.5 text-text font-semibold transition-all duration-200"
+            >
+              Log Another Mood
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-6">
@@ -198,6 +270,7 @@ export default function MoodPage() {
             "Log My Mood"
           )}
         </button>
+        {error && <p className="mt-3 text-sm text-accent-3">{error}</p>}
       </div>
     </div>
   );
