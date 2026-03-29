@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { connectDB } from "@/lib/mongodb";
 import JournalEntry from "@/models/JournalEntry";
 import User from "@/models/User";
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
 
 function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, "").trim();
@@ -66,21 +66,78 @@ export async function POST(req: NextRequest) {
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
       const model = process.env.GEMINI_MODEL ?? "gemini-2.5-flash";
 
-      const prompt = `Analyze this journal entry written by a ${role} dealing with ${stressor}. Return ONLY valid JSON with exactly these keys: tone (single emotion word), summary (two empathetic sentences reflecting what the user expressed), suggestion (one specific actionable tip relevant to their situation). Entry: ${plainText}`;
+      if (!plainText.trim()) {
+        console.warn(
+          "Journal AI: stripped entry text was empty; skipping Gemini (HTML had no readable text)."
+        );
+      } else {
+        const prompt = `Analyze this journal entry written by a ${role} dealing with ${stressor}.
 
-      const result = await ai.models.generateContent({ model, contents: prompt });
-      const text = result.text ?? "";
+Respond with JSON only (schema enforced). Tone = one emotion word. Summary = two empathetic sentences that reflect what they actually wrote. Suggestion = one specific actionable tip for their situation.
 
-      // Extraction and parsing with detailed logging
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        try {
-          const parsed = JSON.parse(jsonMatch[0]);
-          if (parsed.tone && parsed.summary && parsed.suggestion) {
-            aiSummary = parsed;
+Entry:
+${plainText}`;
+
+        const result = await ai.models.generateContent({
+          model,
+          contents: prompt,
+          config: {
+            responseMimeType: "application/json",
+            responseSchema: {
+              type: Type.OBJECT,
+              required: ["tone", "summary", "suggestion"],
+              properties: {
+                tone: {
+                  type: Type.STRING,
+                  description: "Single emotion word for the entry",
+                },
+                summary: {
+                  type: Type.STRING,
+                  description:
+                    "Two empathetic sentences reflecting what the user expressed",
+                },
+                suggestion: {
+                  type: Type.STRING,
+                  description:
+                    "One specific actionable tip relevant to their situation",
+                },
+              },
+            },
+          },
+        });
+
+        const text = result.text?.trim() ?? "";
+        if (!text) {
+          console.warn(
+            "Journal AI: Gemini returned empty text (no candidates or blocked response)."
+          );
+        } else {
+          try {
+            const parsed = JSON.parse(text) as {
+              tone?: string;
+              summary?: string;
+              suggestion?: string;
+            };
+            if (parsed.tone && parsed.summary && parsed.suggestion) {
+              aiSummary = {
+                tone: String(parsed.tone).trim(),
+                summary: String(parsed.summary).trim(),
+                suggestion: String(parsed.suggestion).trim(),
+              };
+            } else {
+              console.warn(
+                "Journal AI: parsed JSON missing tone/summary/suggestion keys:",
+                text.substring(0, 400)
+              );
+            }
+          } catch (e) {
+            console.error(
+              "Journal AI: JSON parse failed after structured output:",
+              e,
+              "Raw:",
+              text.substring(0, 400)
+            );
           }
-        } catch (e) {
-          console.error("Journal analysis JSON parse error:", e, "Raw:", text.substring(0, 300));
         }
       }
     } catch (geminiError) {
