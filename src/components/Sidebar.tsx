@@ -1,3 +1,4 @@
+// Sidebar.tsx
 "use client";
 
 import Link from "next/link";
@@ -14,7 +15,11 @@ import {
   Menu,
   X,
 } from "lucide-react";
-import { useState } from "react";
+
+interface SidebarProps {
+  expanded: boolean;
+  setExpanded: (val: boolean) => void;
+}
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -25,17 +30,16 @@ const navItems = [
   { href: "/report", label: "My Report", icon: BarChart3 },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ expanded, setExpanded }: SidebarProps) {
   const pathname = usePathname();
   const { user } = useUser();
-  const [expanded, setExpanded] = useState(false);
 
   return (
     <>
       {/* Desktop sidebar */}
       <aside
-        className={`hidden md:flex flex-col fixed left-0 top-0 bottom-0 bg-surface border-r border-border z-40 transition-all duration-300 ${expanded ? "w-64" : "w-16"
-          }`}
+        className={`hidden md:flex fixed top-0 left-0 bottom-0 z-40 bg-surface border-r border-border flex-col transition-all duration-300
+    ${expanded ? "w-64" : "w-16"}`}
       >
         {/* Logo + hamburger */}
         <div className="p-3 pb-4 flex items-center justify-between">
@@ -50,7 +54,7 @@ export default function Sidebar() {
             </Link>
           )}
           <button
-            onClick={() => setExpanded((v) => !v)}
+            onClick={() => setExpanded(!expanded)}
             className={`p-2 rounded-lg text-muted hover:text-text hover:bg-surface-2 transition-colors ${!expanded ? "mx-auto" : ""
               }`}
           >
@@ -88,10 +92,11 @@ export default function Sidebar() {
 
         {/* User section */}
         <div className="p-3 border-t border-border">
-          <div className={`flex items-center gap-3 ${!expanded ? "justify-center" : ""}`}>
-            <UserButton
-              appearance={{ elements: { avatarBox: "w-8 h-8" } }}
-            />
+          <div
+            className={`flex items-center gap-3 ${!expanded ? "justify-center" : ""
+              }`}
+          >
+            <UserButton appearance={{ elements: { avatarBox: "w-8 h-8" } }} />
             {expanded && (
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-text truncate">
@@ -112,7 +117,8 @@ export default function Sidebar() {
           {navItems.map((item) => {
             const isActive =
               pathname === item.href ||
-              (item.href !== "/dashboard" && pathname.startsWith(item.href));
+              (item.href !== "/dashboard" &&
+                pathname.startsWith(item.href));
             const Icon = item.icon;
 
             return (
