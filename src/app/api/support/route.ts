@@ -21,9 +21,20 @@ export async function POST(req: NextRequest) {
     const goal = user?.goal || "personal growth";
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
 
-    const prompt = `A ${role} feeling ${tag} with a mood score of ${score}/10 is dealing with ${stressor}. Their goal is: ${goal}. Return ONLY valid JSON with these exact keys: quote (string), quoteAuthor (string), message (one warm empathetic sentence addressed directly to the user), videos (array of 3 objects each with title and youtubeSearchQuery — match content specifically to the feeling of ${tag} not generic wellness), songs (array of 3 objects each with title, artist, spotifySearchQuery — songs must be uplifting and mood-lifting, never sad or heavy).`;
+    const prompt = `A ${role} feeling ${tag} with a mood score of ${score}/10 is dealing with ${stressor}. Their goal is: ${goal}. 
+
+Return ONLY valid JSON with these exact keys:
+- quote (string - inspirational quote)
+- quoteAuthor (string)
+- message (string - one warm empathetic sentence directed to user)
+- uplifting_songs (array of 3 objects with: title, artist, spotifyQuery)
+- motivational_videos (array of 2 objects with: title, youtubeSearchQuery for MOTIVATIONAL SPEAKER content)
+- meditation_videos (array of 2 objects with: title, youtubeSearchQuery for MEDITATION/BREATHING/YOGA content)
+- binaural_beats (array of 2 objects with: title, type (e.g., '10Hz Alpha', '40Hz Beta'), youtubeSearchQuery)
+
+Focus on uplifting songs suited to ${tag}. Exclude sad or heavy music.`;
 
     const result = await model.generateContent(prompt);
     const text = result.response.text();
@@ -37,42 +48,60 @@ export async function POST(req: NextRequest) {
     throw new Error("Failed to parse Gemini response");
   } catch (error) {
     console.error("Support content error:", error);
-    // Return fallback
+    // Return fallback with enhanced structure
     return NextResponse.json({
       quote:
         "You don't have to control your thoughts. You just have to stop letting them control you.",
       quoteAuthor: "Dan Millman",
       message:
         "What you're feeling right now is valid, and it takes courage to acknowledge it.",
-      videos: [
-        {
-          title: "5-Minute Breathing Exercise",
-          youtubeSearchQuery: "5 minute breathing exercise for anxiety",
-        },
-        {
-          title: "Grounding Technique",
-          youtubeSearchQuery: "grounding technique 5 4 3 2 1 anxiety",
-        },
-        {
-          title: "Self-Compassion Meditation",
-          youtubeSearchQuery: "self compassion meditation 10 minutes",
-        },
-      ],
-      songs: [
+      uplifting_songs: [
         {
           title: "Here Comes The Sun",
           artist: "The Beatles",
-          spotifySearchQuery: "Here Comes The Sun Beatles",
+          spotifyQuery: "Here Comes The Sun Beatles",
         },
         {
           title: "Three Little Birds",
           artist: "Bob Marley",
-          spotifySearchQuery: "Three Little Birds Bob Marley",
+          spotifyQuery: "Three Little Birds Bob Marley",
         },
         {
           title: "Lovely Day",
           artist: "Bill Withers",
-          spotifySearchQuery: "Lovely Day Bill Withers",
+          spotifyQuery: "Lovely Day Bill Withers",
+        },
+      ],
+      motivational_videos: [
+        {
+          title: "How to Overcome Self-Doubt",
+          youtubeSearchQuery: "motivational speaker overcome self doubt",
+        },
+        {
+          title: "Change Your Mindset",
+          youtubeSearchQuery: "powerful motivational speech change mindset",
+        },
+      ],
+      meditation_videos: [
+        {
+          title: "5-Minute Breathing Exercise",
+          youtubeSearchQuery: "5 minute breathing exercise anxiety relief",
+        },
+        {
+          title: "Guided Meditation",
+          youtubeSearchQuery: "10 minute guided meditation relaxation",
+        },
+      ],
+      binaural_beats: [
+        {
+          title: "Relaxation & Calm",
+          type: "10Hz Alpha Waves",
+          youtubeSearchQuery: "10Hz alpha waves relaxation meditation",
+        },
+        {
+          title: "Focus & Clarity",
+          type: "40Hz Beta Waves",
+          youtubeSearchQuery: "40Hz beta waves focus concentration",
         },
       ],
     });

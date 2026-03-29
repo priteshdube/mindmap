@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
     const fullPrompt = `${systemPrompt}\n\nConversation History:\n${conversationHistory}`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
+      model: "gemini-3-flash-preview",
       contents: fullPrompt,
     });
 

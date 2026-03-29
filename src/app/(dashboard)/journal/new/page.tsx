@@ -111,8 +111,8 @@ export default function JournalNewPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Top bar */}
-      <div className="sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-border">
-        <div className="max-w-4xl mx-auto flex items-center justify-between px-6 py-3">
+      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-xl border-b border-border">
+        <div className="max-w-4xl mx-auto flex items-center justify-between px-6 py-4">
           <Link
             href="/journal"
             className="flex items-center gap-2 text-muted hover:text-white transition-colors"
@@ -123,7 +123,7 @@ export default function JournalNewPage() {
           <button
             onClick={handleSave}
             disabled={!title.trim() || !content.trim() || saving}
-            className="bg-accent hover:bg-accent/80 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl px-5 py-2 text-white text-sm font-medium transition-colors flex items-center gap-2"
+            className="bg-accent hover:bg-accent/80 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl px-5 py-2 text-white text-sm font-medium transition-colors flex items-center gap-2 whitespace-nowrap"
           >
             <Save className="w-3.5 h-3.5" /> Save & Analyze
           </button>
@@ -131,7 +131,7 @@ export default function JournalNewPage() {
       </div>
 
       {/* Editor area */}
-      <div className="max-w-4xl mx-auto px-6 py-8 animate-fade-in">
+      <div className="max-w-4xl mx-auto px-6 py-8 animate-fade-in pb-20">
         {/* Title */}
         <input
           value={title}
