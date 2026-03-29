@@ -76,8 +76,8 @@ export default function Sidebar({ expanded, setExpanded }: SidebarProps) {
                   <Link
                     href={item.href}
                     className={`flex items-center gap-3 px-2 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${isActive
-                      ? "bg-accent/10 text-text border-l-2 border-accent"
-                      : "text-muted hover:text-text hover:bg-surface-2 border-l-2 border-transparent"
+                        ? "bg-accent/15 text-text shadow-sm"
+                        : "text-muted hover:text-text hover:bg-surface-2"
                       } ${!expanded ? "justify-center" : ""}`}
                     title={!expanded ? item.label : undefined}
                   >
