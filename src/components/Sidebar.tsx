@@ -1,3 +1,4 @@
+// Sidebar.tsx
 "use client";
 
 import Link from "next/link";
@@ -11,7 +12,14 @@ import {
   Users,
   BarChart3,
   Brain,
+  Menu,
+  X,
 } from "lucide-react";
+
+interface SidebarProps {
+  expanded: boolean;
+  setExpanded: (val: boolean) => void;
+}
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -22,28 +30,40 @@ const navItems = [
   { href: "/report", label: "My Report", icon: BarChart3 },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ expanded, setExpanded }: SidebarProps) {
   const pathname = usePathname();
   const { user } = useUser();
 
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 w-64 bg-surface border-r border-border z-40">
-        {/* Logo */}
-        <div className="p-6 pb-4">
-          <Link href="/dashboard" className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent to-accent-2 flex items-center justify-center shadow-lg shadow-accent/20">
-              <Brain className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-lg font-bold text-text tracking-tight">
-              MindPath
-            </span>
-          </Link>
+      <aside
+        className={`hidden md:flex fixed top-0 left-0 bottom-0 z-40 bg-surface border-r border-border flex-col transition-all duration-300
+    ${expanded ? "w-64" : "w-16"}`}
+      >
+        {/* Logo + hamburger */}
+        <div className="p-3 pb-4 flex items-center justify-between">
+          {expanded && (
+            <Link href="/dashboard" className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent to-accent-2 flex items-center justify-center shadow-lg shadow-accent/20">
+                <Brain className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-lg font-bold text-text tracking-tight">
+                MindPath
+              </span>
+            </Link>
+          )}
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className={`p-2 rounded-lg text-muted hover:text-text hover:bg-surface-2 transition-colors ${!expanded ? "mx-auto" : ""
+              }`}
+          >
+            {expanded ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-3 py-2">
+        <nav className="flex-1 px-2 py-2">
           <ul className="space-y-1">
             {navItems.map((item) => {
               const isActive =
@@ -55,14 +75,14 @@ export default function Sidebar() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
-                      isActive
-                        ? "border-l-2 border-accent bg-accent/10 text-white ml-0"
-                        : "text-muted hover:text-white hover:bg-surface-2 border-l-2 border-transparent"
-                    }`}
+                    className={`flex items-center gap-3 px-2 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${isActive
+                        ? "bg-accent/15 text-text shadow-sm"
+                        : "text-muted hover:text-text hover:bg-surface-2"
+                      } ${!expanded ? "justify-center" : ""}`}
+                    title={!expanded ? item.label : undefined}
                   >
-                    <Icon className="w-[18px] h-[18px]" />
-                    {item.label}
+                    <Icon className="w-[18px] h-[18px] shrink-0" />
+                    {expanded && item.label}
                   </Link>
                 </li>
               );
@@ -71,23 +91,22 @@ export default function Sidebar() {
         </nav>
 
         {/* User section */}
-        <div className="p-4 border-t border-border">
-          <div className="flex items-center gap-3">
-            <UserButton
-              appearance={{
-                elements: {
-                  avatarBox: "w-8 h-8",
-                },
-              }}
-            />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-text truncate">
-                {user?.firstName || "User"}
-              </p>
-              <p className="text-xs text-muted truncate">
-                {user?.primaryEmailAddress?.emailAddress || ""}
-              </p>
-            </div>
+        <div className="p-3 border-t border-border">
+          <div
+            className={`flex items-center gap-3 ${!expanded ? "justify-center" : ""
+              }`}
+          >
+            <UserButton appearance={{ elements: { avatarBox: "w-8 h-8" } }} />
+            {expanded && (
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-text truncate">
+                  {user?.firstName || "User"}
+                </p>
+                <p className="text-xs text-muted truncate">
+                  {user?.primaryEmailAddress?.emailAddress || ""}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </aside>
@@ -98,18 +117,16 @@ export default function Sidebar() {
           {navItems.map((item) => {
             const isActive =
               pathname === item.href ||
-              (item.href !== "/dashboard" && pathname.startsWith(item.href));
+              (item.href !== "/dashboard" &&
+                pathname.startsWith(item.href));
             const Icon = item.icon;
 
             return (
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className={`flex flex-col items-center gap-0.5 px-2 py-2 rounded-lg text-xs transition-all duration-200 ${
-                    isActive
-                      ? "text-accent"
-                      : "text-muted hover:text-white"
-                  }`}
+                  className={`flex flex-col items-center gap-0.5 px-2 py-2 rounded-lg text-xs transition-all duration-200 ${isActive ? "text-accent" : "text-muted hover:text-text"
+                    }`}
                 >
                   <Icon className="w-5 h-5" />
                 </Link>

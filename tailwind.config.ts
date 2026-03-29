@@ -9,18 +9,19 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#0f0f13",
-        surface: "#1a1a24",
-        "surface-2": "#22222f",
-        accent: "#7c6ff7",
-        "accent-2": "#5eead4",
-        "accent-3": "#f87171",
-        text: "#e8e8f0",
-        muted: "#6b6b80",
-        border: "#2e2e3e",
+        background: "#f7f5ef",
+        surface: "#ffffff",
+        "surface-2": "#f1eee4",
+        accent: "#2f9b87",
+        "accent-2": "#f2a65a",
+        "accent-3": "#e07a5f",
+        text: "#1f2d2b",
+        muted: "#6f7d79",
+        border: "#d9e4e0",
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
+        sans: ["Nunito", "system-ui", "sans-serif"],
+        display: ["Poppins", "Nunito", "system-ui", "sans-serif"],
       },
       animation: {
         "skeleton-pulse": "skeleton-pulse 1.5s ease-in-out infinite",

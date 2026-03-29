@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
 export async function POST(req: NextRequest) {
   const { userId } = auth();
@@ -20,18 +20,23 @@ export async function POST(req: NextRequest) {
     const stressor = user?.stressor || "life challenges";
     const goal = user?.goal || "personal growth";
 
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
+    const model = process.env.GEMINI_MODEL ?? "gemini-2.5-flash";
 
     const prompt = `A ${role} feeling ${tag} with a mood score of ${score}/10 is dealing with ${stressor}. Their goal is: ${goal}. Return ONLY valid JSON with these exact keys: quote (string), quoteAuthor (string), message (one warm empathetic sentence addressed directly to the user), videos (array of 3 objects each with title and youtubeSearchQuery — match content specifically to the feeling of ${tag} not generic wellness), songs (array of 3 objects each with title, artist, spotifySearchQuery — songs must be uplifting and mood-lifting, never sad or heavy).`;
 
-    const result = await model.generateContent(prompt);
-    const text = result.response.text();
+    const result = await ai.models.generateContent({ model, contents: prompt });
+    const text = result.text ?? "";
 
+    // Robust JSON extraction: handles markdown fences and preamble
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
-      const parsed = JSON.parse(jsonMatch[0]);
-      return NextResponse.json(parsed);
+      try {
+        const parsed = JSON.parse(jsonMatch[0]);
+        return NextResponse.json(parsed);
+      } catch (parseError) {
+        console.error("Gemini JSON parse failed:", parseError, "Raw:", text.substring(0, 500));
+      }
     }
 
     throw new Error("Failed to parse Gemini response");

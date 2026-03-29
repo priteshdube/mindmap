@@ -70,7 +70,7 @@ export default function JournalPage() {
             Your Journal
           </h1>
           <p className="text-muted mt-1">
-            A safe space for your thoughts and reflections.
+            Capture what happened today and what it meant to you.
           </p>
         </div>
         <Link
@@ -121,8 +121,8 @@ export default function JournalPage() {
             Your journal is empty
           </h3>
           <p className="text-muted text-sm mb-6 max-w-sm mx-auto">
-            Writing helps you process your thoughts and feelings. Start your
-            first entry today.
+            Writing helps you make sense of pressure and progress. Start your
+            first entry when you&apos;re ready.
           </p>
           <Link
             href="/journal/new"
