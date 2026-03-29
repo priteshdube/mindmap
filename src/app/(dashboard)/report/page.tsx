@@ -96,7 +96,7 @@ export default function ReportPage() {
 
   return (
     <div className="p-6 md:p-8 animate-fade-in">
-      <div className="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+      <div className="mb-5 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-text mb-2">
             My Report

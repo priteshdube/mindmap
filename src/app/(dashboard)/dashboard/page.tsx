@@ -58,9 +58,40 @@ function getGreeting() {
   return "Good evening";
 }
 
+function buildDailyMoodData(moods: MoodLog[]) {
+  const grouped = new Map<string, { total: number; count: number; date: Date }>();
+
+  moods.forEach((m) => {
+    const dateObj = new Date(m.date);
+    const key = format(dateObj, "yyyy-MM-dd");
+    const existing = grouped.get(key);
+
+    if (existing) {
+      existing.total += m.score;
+      existing.count += 1;
+      return;
+    }
+
+    grouped.set(key, {
+      total: m.score,
+      count: 1,
+      date: dateObj,
+    });
+  });
+
+  return Array.from(grouped.values())
+    .sort((a, b) => a.date.getTime() - b.date.getTime())
+    .map((d) => ({
+      day: format(d.date, "EEE"),
+      score: Math.round((d.total / d.count) * 10) / 10,
+    }));
+}
+
 function computeStats(moods: MoodLog[]): DashStats {
   if (!moods.length) return { avg: 0, journalCount: 0, streak: 0 };
-  const avg = moods.reduce((a, m) => a + m.score, 0) / moods.length;
+  const dailyMoodData = buildDailyMoodData(moods);
+  const avg =
+    dailyMoodData.reduce((a, d) => a + d.score, 0) / dailyMoodData.length;
 
   // Compute streak
   const sorted = [...moods].sort(
@@ -143,12 +174,7 @@ export default function DashboardPage() {
   const stats = computeStats(moods);
   stats.journalCount = journals.length;
 
-  const chartData = [...moods]
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-    .map((m) => ({
-      day: format(new Date(m.date), "EEE"),
-      score: m.score,
-    }));
+  const chartData = buildDailyMoodData(moods);
 
   if (loading) {
     return (
