@@ -42,7 +42,7 @@ export default async function LandingPage() {
                   Sign In
                 </Link>
                 <Link
-                  href="/sign-up"
+                  href="/dashboard"
                   className="bg-accent hover:bg-accent/80 rounded-xl px-5 py-2.5 text-white text-sm font-medium transition-colors"
                 >
                   Get Started
@@ -87,7 +87,7 @@ export default async function LandingPage() {
           {/* CTAs */}
           <div className="flex items-center justify-center gap-4 flex-wrap">
             <Link
-              href="/sign-up"
+              href="/dashboard"
               className="bg-accent hover:bg-accent/80 rounded-xl px-8 py-3.5 text-white font-semibold transition-all duration-200 flex items-center gap-2 shadow-lg shadow-accent/20 hover:shadow-accent/30"
             >
               Get Started <ArrowRight className="w-4 h-4" />
